@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required #登入後才能操作
 from django.http import HttpResponse
 from django.contrib.auth import logout #登出模組
 import random 
-from mysite.models import Post,Country,City
+from mysite.models import Post,Country,City,Note
 
 #以下三行為繪圖所需模組
 from plotly.offline import plot
@@ -38,6 +38,7 @@ def index(request):
 def news(request):
 	posts=Post.objects.all()
 	return render(request, "news.html", locals())
+
 @login_required(login_url="/admin/login/")
 def show(request,id):
 	try:
@@ -95,6 +96,28 @@ def delete(request,id):
 	except:
 		return redirect("/news/")
 	return redirect("/news/")
+
+def deletenote(request,id):
+	try:
+		note=Note.objects.get(id=id)
+		note.delete()
+	except:
+		return redirect("/note/")
+	return redirect("/note/")
+
+def addnote(request):
+	if request.method=="POST":
+		title=request.POST["title"]
+		if len(title) > 10:
+			note=Note(title=title)
+			note.save()
+	return redirect("/note/")
+
+def note(request):
+	notes=Note.objects.all()
+	return render(request, "note.html", locals())
+
+
 
 
 #下一步到templates內產生xxxx.html檔案(可以複製相同的html檔案 過去更改檔名)

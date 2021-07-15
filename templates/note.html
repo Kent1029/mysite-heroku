@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %} 最新消息 {% endblock %}
+{% block headmessage %}我的最新消息 {% endblock %}
+{% block main %}
+	<hr>
+	<form action="/addnote/" method=POST>
+		{% csrf_token %}
+		你的消息內容：<input name='title' type=text size=20>
+		<input type=submit value="儲存">
+	</form>
+	<table class="table table-striped">
+		<tr>
+			<td>編號</td><td>最新消息</td><td>張貼日期</td>
+			{% if request.user.is_superuser%}
+			<td>管理</td>
+			{% endif %}
+		</tr>
+	{% for note in notes %} <!-- Django模組的語法 -->
+		<tr>
+			<td>{{ note.id }}</td> <!-- 雙大括號 秀出變數-->
+			<td>
+				{{ note.title }} 
+			</td>
+			<td>{{ note.pub_date }}</td>
+				{% if request.user.is_superuser %}
+					<td><a class="btn btn-warning" href="/deletenote/{{note.id}}/">刪除</a></td>
+				{% endif %}
+		</tr>
+	{% endfor %}
+	</table>
+{% endblock %}
+
